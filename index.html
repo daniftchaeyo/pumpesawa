@@ -17,7 +17,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: #f1cbd2; /* Rosa pastel similar al video */
+            background-color: #f1cbd2;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
         }
@@ -46,7 +46,7 @@
         }
 
         .cake-container:active {
-            transform: scale(0.98); /* Pequeño efecto de clic */
+            transform: scale(0.98);
         }
 
         /* Base del pastel */
@@ -71,7 +71,7 @@
             border-radius: 125px / 40px;
         }
 
-        /* Gotas de glaseado (Drips) */
+        /* Gotas de glaseado */
         .cake-top::after {
             content: '';
             position: absolute;
@@ -84,14 +84,14 @@
             background-position: 0 0;
         }
 
-        /* Contenedor invisible para posicionar las velas */
+        /* Contenedor para posicionar las velas */
         #candles-container {
             position: absolute;
             top: 20px;
             left: 0;
             width: 100%;
             height: 100px;
-            pointer-events: none; /* Permite que el clic traspase al pastel */
+            pointer-events: none;
         }
 
         /* Diseño de la vela */
@@ -124,7 +124,7 @@
             animation: flicker 0.6s infinite alternate;
         }
 
-        /* Humo (aparece al apagar la vela) */
+        /* Humo (aparece al apagar) */
         .smoke {
             position: absolute;
             top: -15px;
@@ -138,13 +138,11 @@
             animation: smokeRise 1.5s ease-out forwards;
         }
 
-        /* Animación del parpadeo del fuego */
         @keyframes flicker {
             0% { transform: translateX(-50%) scale(1) rotate(-2deg); opacity: 0.9; }
             100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; }
         }
 
-        /* Animación de la estela de humo */
         @keyframes smokeRise {
             0% { opacity: 0.8; transform: translate(-50%, 0) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -40px) scale(2.5); }
@@ -167,7 +165,11 @@
         let candleCount = 0;
         const maxCandles = 5;
 
-        // Posiciones predefinidas para que las 5 velas queden bien distribuidas
+        // Objetos de audio para los efectos
+        const sonidoVela = new Audio('vela.mp3');
+        const sonidoConfeti = new Audio('confeti.mp3');
+
+        // Posiciones de las velas
         const positions = [
             { left: '45px', bottom: '20px' },
             { left: '85px', bottom: '35px' },
@@ -179,14 +181,16 @@
         cake.addEventListener('click', () => {
             // Fase 1: Poner las velas
             if (candleCount < maxCandles) {
+                // Reinicia y reproduce el sonido de la vela
+                sonidoVela.currentTime = 0; 
+                sonidoVela.play().catch(e => console.log("Esperando interacción para audio"));
+
                 const candle = document.createElement('div');
                 candle.className = 'candle';
                 
-                // Asignar posición
                 candle.style.left = positions[candleCount].left;
                 candle.style.bottom = positions[candleCount].bottom;
 
-                // Crear el fuego
                 const flame = document.createElement('div');
                 flame.className = 'flame';
 
@@ -197,22 +201,22 @@
             } 
             // Fase 2: Apagar velas y lanzar confeti
             else if (candleCount === maxCandles) {
-                // Reemplazar el fuego por humo
+                // Reproduce el sonido final
+                sonidoConfeti.play().catch(e => console.log("Esperando interacción para audio"));
+
                 const flames = document.querySelectorAll('.flame');
                 flames.forEach(flame => {
                     flame.classList.remove('flame');
                     flame.classList.add('smoke'); 
                 });
 
-                // Lanzar la animación de confeti
                 confetti({
                     particleCount: 150,
                     spread: 80,
-                    origin: { y: 0.3 }, // Empieza desde un poco más arriba
+                    origin: { y: 0.3 },
                     colors: ['#e36a8e', '#ffffff', '#ffeb3b', '#a1c4fd']
                 });
 
-                // Aumentamos el contador para que no se repita el confeti con más clics
                 candleCount++; 
             }
         });
