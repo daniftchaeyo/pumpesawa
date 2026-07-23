@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Cumpleaños</title>
+    <!-- Librería para el efecto de confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* Estilos generales y fondo */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1cbd2; /* Rosa pastel similar al video */
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Cartel de Happy Birthday */
+        .header {
+            background-color: #de7896;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 80px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+
+        /* Contenedor principal del pastel */
+        .cake-container {
+            position: relative;
+            width: 250px;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .cake-container:active {
+            transform: scale(0.98); /* Pequeño efecto de clic */
+        }
+
+        /* Base del pastel */
+        .cake-bottom {
+            position: absolute;
+            bottom: 0;
+            width: 250px;
+            height: 110px;
+            background-color: #e36a8e;
+            border-radius: 125px / 40px;
+            box-shadow: 0 10px 0 #cc5479, 0 20px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Cubierta o frosting del pastel */
+        .cake-top {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            width: 250px;
+            height: 70px;
+            background-color: #fff9f9;
+            border-radius: 125px / 40px;
+        }
+
+        /* Gotas de glaseado (Drips) */
+        .cake-top::after {
+            content: '';
+            position: absolute;
+            top: 35px;
+            left: 0;
+            width: 250px;
+            height: 30px;
+            background: radial-gradient(circle at 15px 10px, #fff9f9 18px, transparent 19px);
+            background-size: 35px 40px;
+            background-position: 0 0;
+        }
+
+        /* Contenedor invisible para posicionar las velas */
+        #candles-container {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none; /* Permite que el clic traspase al pastel */
+        }
+
+        /* Diseño de la vela */
+        .candle {
+            position: absolute;
+            width: 12px;
+            height: 45px;
+            background: repeating-linear-gradient(
+                45deg,
+                #fff,
+                #fff 5px,
+                #6e1e2d 5px,
+                #6e1e2d 10px
+            );
+            border-radius: 4px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Llama de la vela */
+        .flame {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 24px;
+            background-color: #ff9d00;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 0 15px #ffeb3b;
+            animation: flicker 0.6s infinite alternate;
+        }
+
+        /* Humo (aparece al apagar la vela) */
+        .smoke {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 15px;
+            background-color: #a0a0a0;
+            border-radius: 50%;
+            opacity: 0;
+            animation: smokeRise 1.5s ease-out forwards;
+        }
+
+        /* Animación del parpadeo del fuego */
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-2deg); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; }
+        }
+
+        /* Animación de la estela de humo */
+        @keyframes smokeRise {
+            0% { opacity: 0.8; transform: translate(-50%, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -40px) scale(2.5); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">HAPPY BIRTHDAY!</div>
+    
+    <div class="cake-container" id="cake">
+        <div class="cake-bottom"></div>
+        <div class="cake-top"></div>
+        <div id="candles-container"></div>
+    </div>
+
+    <script>
+        const cake = document.getElementById('cake');
+        const candlesContainer = document.getElementById('candles-container');
+        let candleCount = 0;
+        const maxCandles = 5;
+
+        // Posiciones predefinidas para que las 5 velas queden bien distribuidas
+        const positions = [
+            { left: '45px', bottom: '20px' },
+            { left: '85px', bottom: '35px' },
+            { left: '120px', bottom: '45px' },
+            { left: '160px', bottom: '35px' },
+            { left: '195px', bottom: '20px' }
+        ];
+
+        cake.addEventListener('click', () => {
+            // Fase 1: Poner las velas
+            if (candleCount < maxCandles) {
+                const candle = document.createElement('div');
+                candle.className = 'candle';
+                
+                // Asignar posición
+                candle.style.left = positions[candleCount].left;
+                candle.style.bottom = positions[candleCount].bottom;
+
+                // Crear el fuego
+                const flame = document.createElement('div');
+                flame.className = 'flame';
+
+                candle.appendChild(flame);
+                candlesContainer.appendChild(candle);
+
+                candleCount++;
+            } 
+            // Fase 2: Apagar velas y lanzar confeti
+            else if (candleCount === maxCandles) {
+                // Reemplazar el fuego por humo
+                const flames = document.querySelectorAll('.flame');
+                flames.forEach(flame => {
+                    flame.classList.remove('flame');
+                    flame.classList.add('smoke'); 
+                });
+
+                // Lanzar la animación de confeti
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.3 }, // Empieza desde un poco más arriba
+                    colors: ['#e36a8e', '#ffffff', '#ffeb3b', '#a1c4fd']
+                });
+
+                // Aumentamos el contador para que no se repita el confeti con más clics
+                candleCount++; 
+            }
+        });
+    </script>
+
+</body>
+</html>
