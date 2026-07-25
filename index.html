@@ -9,17 +9,21 @@
     
     <style>
         /* Estilos generales y fondo */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background-color: #f1cbd2;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
         }
 
         /* Cartel de Happy Birthday */
@@ -31,25 +35,25 @@
             font-size: 1.8rem;
             font-weight: 900;
             letter-spacing: 2px;
-            margin-bottom: 80px;
+            margin-bottom: 50px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             user-select: none;
+            transition: opacity 0.5s;
         }
 
-        /* Contenedor principal del pastel */
+        /* ---------------- PASTEL ---------------- */
         .cake-container {
             position: relative;
             width: 250px;
             height: 200px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, opacity 1s, display 1s;
         }
 
         .cake-container:active {
             transform: scale(0.98);
         }
 
-        /* Base del pastel */
         .cake-bottom {
             position: absolute;
             bottom: 0;
@@ -60,7 +64,6 @@
             box-shadow: 0 10px 0 #cc5479, 0 20px 20px rgba(0,0,0,0.15);
         }
 
-        /* Cubierta o frosting del pastel */
         .cake-top {
             position: absolute;
             bottom: 70px;
@@ -71,7 +74,6 @@
             border-radius: 125px / 40px;
         }
 
-        /* Gotas de glaseado */
         .cake-top::after {
             content: '';
             position: absolute;
@@ -84,7 +86,6 @@
             background-position: 0 0;
         }
 
-        /* Contenedor para posicionar las velas */
         #candles-container {
             position: absolute;
             top: 20px;
@@ -94,7 +95,6 @@
             pointer-events: none;
         }
 
-        /* Diseño de la vela */
         .candle {
             position: absolute;
             width: 12px;
@@ -110,7 +110,6 @@
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Llama de la vela */
         .flame {
             position: absolute;
             top: -22px;
@@ -124,7 +123,6 @@
             animation: flicker 0.6s infinite alternate;
         }
 
-        /* Humo (aparece al apagar) */
         .smoke {
             position: absolute;
             top: -15px;
@@ -147,29 +145,179 @@
             0% { opacity: 0.8; transform: translate(-50%, 0) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -40px) scale(2.5); }
         }
+
+        /* ---------------- SOBRE Y CARTA ---------------- */
+        .envelope-wrapper {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            background-color: #f08080;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease, visibility 1s;
+            margin-top: 20px;
+        }
+
+        /* Mostrar el sobre cuando se active */
+        .envelope-wrapper.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Solapa superior del sobre */
+        .envelope-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 100px solid #e06666;
+            transform-origin: top;
+            transition: transform 0.6s ease 0.4s, z-index 0.2s 0.4s;
+            z-index: 3;
+        }
+
+        /* Solapas laterales del sobre */
+        .envelope-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-left: 140px solid #f49797;
+            border-right: 140px solid #f49797;
+            border-top: 90px solid transparent;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 2;
+        }
+
+        /* La carta dentro del sobre */
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            width: 250px;
+            height: 160px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.8s ease 0.6s, z-index 0.1s 0.8s, height 0.8s ease, width 0.8s ease, left 0.8s ease;
+            z-index: 1;
+            overflow: hidden;
+            color: #444;
+            text-align: center;
+        }
+
+        .letter h2 {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: #de7896;
+            margin-bottom: 15px;
+        }
+
+        /* Estilos específicos para la carta larga */
+        .texto-carta {
+            text-align: left;
+            padding-bottom: 20px;
+        }
+
+        .texto-carta p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        /* Estado Abierto */
+        .envelope-wrapper.open::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translateY(-130px);
+            height: 280px; /* Un poco más alto para facilitar la lectura */
+            z-index: 4;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow-y: auto; /* Activa la barra de desplazamiento si es necesario */
+        }
+        
+        /* Estilizar la barra de desplazamiento de la carta */
+        .letter::-webkit-scrollbar {
+            width: 6px;
+        }
+        .letter::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .letter::-webkit-scrollbar-thumb {
+            background: #de7896; 
+            border-radius: 4px;
+        }
+        .letter::-webkit-scrollbar-thumb:hover {
+            background: #cc5479; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">FELIZ CUMPLEAÑOS!</div>
+    <div class="header" id="header-text">FELIZ CUMPLEAÑOS!</div>
     
+    <!-- PASTEL -->
     <div class="cake-container" id="cake">
         <div class="cake-bottom"></div>
         <div class="cake-top"></div>
         <div id="candles-container"></div>
     </div>
 
+    <!-- SOBRE DE CARTA -->
+    <div class="envelope-wrapper" id="envelope">
+        <div class="letter">
+            <h2>🎉 ¡Feliz cumpleaños! 🎉</h2>
+            <div class="texto-carta">
+                <p>Hoy es un día muy especial, no solo porque cumples años, sino porque se celebra la existencia de una persona tan increíble como tú. Y yo, que tengo la inmensa suerte de llamarte mi mejor amiga, qué mejor que aprovechar esta fecha para recordarte lo mucho que significas para mí.</p>
+                
+                <p>Cada día, mes y año que pasa me doy más cuenta de lo afortunado que soy de tenerte en mi vida. Has sido mi compañera de alegrías, tristezas y de amarguras, mi apoyo incondicional y esa persona con la que puedo ser completamente yo mismo sin miedo a ser juzgado. No hay palabras suficientes que definan la gran gratitud que siento por tu amistad.</p>
+                
+                <p>Recuerdo todos esos momentos que hemos compartido: las risas, las conversaciones hasta la madrugada (que muchas de esas fueron porque estaba tristón. No es queja.) las palabras de apoyo en momentos difíciles, las veces que has alegrado mis días sin tú saber que yo estaba mal, las veces que me has hecho llorar por tus palabras hacia mí y nuestra amistad y la celebración sincera de cada logro. Cada recuerdo contigo es un tesoro que guardo con mucho cariño en mi corazón.</p>
+                
+                <p>Eres una persona extraordinaria. Admiro tu fuerza, tu autenticidad, tu bondad, tu sentido del humor, tu amargura (porque sí eres amargada, como yo.) y tu capacidad única que tienes de iluminar específicamente mi vida. Tu presencia hace que todo sea mejor, más ligero y más bonito. Me inspiras constantemente a ser una mejor persona. (aunque no dure mucho el intento jiji.)</p>
+                
+                <p>Este nuevo año, deseo de todo corazón que tus sueños se hagan realidad, que la felicidad te acompañe cada día, que la salud nunca te falte y sigas brillando con esa luz propia que posees. Mereces todo lo bueno que tiene la vida y muchísimo más.</p>
+                
+                <p>Quiero que sepas que, pase lo que pase, siempre voy a estar aquí para ti. Para celebrar con tus victorias, para ser un apoyo en los momentos difíciles, para reír contigo y para recordar todas esas historias que han construido esta amistad. Esta amistad es uno de los regalos más valiosos que la vida me ha dado. Estoy tan orgulloso de ti y de la persona en que te has convertido.</p>
+                
+                <p>Gracias por existir, por ser tú y por hacer de mi vida mucho más especial. Te quiero muchísimo, hoy, mañana y siempre.</p>
+                
+                <p><strong>Feliz cumpleaños a la mejor amiga del universo!</strong></p>
+                
+                <p><em>Te quiero chawa quere chanwis.</em></p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const cake = document.getElementById('cake');
         const candlesContainer = document.getElementById('candles-container');
+        const envelope = document.getElementById('envelope');
         let candleCount = 0;
         const maxCandles = 5;
 
-        // Objetos de audio para los efectos
+        // Archivos de audio
         const sonidoVela = new Audio('vela.mp3');
         const sonidoConfeti = new Audio('confeti.mp3');
+        const musicaFondo = new Audio('musica.mp3');
+        musicaFondo.loop = true; // Para que la canción se repita
 
-        // Posiciones de las velas
         const positions = [
             { left: '45px', bottom: '20px' },
             { left: '85px', bottom: '35px' },
@@ -178,12 +326,12 @@
             { left: '195px', bottom: '20px' }
         ];
 
+        // 1. Clics en el pastel
         cake.addEventListener('click', () => {
-            // Fase 1: Poner las velas
+            // Fase 1: Poner velas
             if (candleCount < maxCandles) {
-                // Reinicia y reproduce el sonido de la vela
                 sonidoVela.currentTime = 0; 
-                sonidoVela.play().catch(e => console.log("Esperando interacción para audio"));
+                sonidoVela.play().catch(e => console.log("Audio de vela bloqueado"));
 
                 const candle = document.createElement('div');
                 candle.className = 'candle';
@@ -199,26 +347,47 @@
 
                 candleCount++;
             } 
-            // Fase 2: Apagar velas y lanzar confeti
+            // Fase 2: Apagar velas, confeti y revelar la carta
             else if (candleCount === maxCandles) {
-                // Reproduce el sonido final
-                sonidoConfeti.play().catch(e => console.log("Esperando interacción para audio"));
+                // Sonido de confeti
+                sonidoConfeti.play().catch(e => console.log("Audio de confeti bloqueado"));
 
+                // Apagar velas
                 const flames = document.querySelectorAll('.flame');
                 flames.forEach(flame => {
                     flame.classList.remove('flame');
                     flame.classList.add('smoke'); 
                 });
 
+                // Lanzar Confeti
                 confetti({
-                    particleCount: 150,
-                    spread: 80,
+                    particleCount: 160,
+                    spread: 90,
                     origin: { y: 0.3 },
                     colors: ['#e36a8e', '#ffffff', '#ffeb3b', '#a1c4fd']
                 });
 
                 candleCount++; 
+
+                // Transición al momento de la carta
+                setTimeout(() => {
+                    // Iniciar la música de fondo
+                    musicaFondo.play().catch(e => console.log("Música de fondo bloqueada por navegador"));
+                    
+                    // Ocultar pastel y mostrar sobre
+                    cake.style.opacity = '0';
+                    setTimeout(() => {
+                        cake.style.display = 'none';
+                        envelope.classList.add('show');
+                    }, 800);
+
+                }, 2000); // 2 segundos después del confeti
             }
+        });
+
+        // 2. Clic en el sobre para abrir la carta
+        envelope.addEventListener('click', () => {
+            envelope.classList.toggle('open');
         });
     </script>
 
