@@ -146,14 +146,13 @@
             100% { opacity: 0; transform: translate(-50%, -40px) scale(2.5); }
         }
 
-        /* ---------------- SOBRE Y CARTA ---------------- */
+        /* ---------------- SOBRE REALISTA ---------------- */
         .envelope-wrapper {
             position: relative;
-            width: 280px;
-            height: 180px;
-            background-color: #f08080;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            width: 300px;
+            height: 200px;
+            background-color: #c95c5c; /* Color oscuro para el fondo interno del sobre */
+            border-radius: 5px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             cursor: pointer;
             opacity: 0;
@@ -163,54 +162,54 @@
             margin-top: 20px;
         }
 
-        /* Mostrar el sobre cuando se active */
         .envelope-wrapper.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
 
-        /* Solapa superior del sobre */
+        /* Solapa superior */
         .envelope-wrapper::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            border-left: 140px solid transparent;
-            border-right: 140px solid transparent;
-            border-top: 100px solid #e06666;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 120px solid #e06666; /* Color de la solapa exterior */
             transform-origin: top;
-            transition: transform 0.6s ease 0.4s, z-index 0.2s 0.4s;
-            z-index: 3;
+            transition: transform 0.6s ease, z-index 0.2s 0.3s;
+            z-index: 4;
         }
 
-        /* Solapas laterales del sobre */
+        /* Bolsillo inferior (lo que tapa la carta) */
         .envelope-wrapper::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            border-left: 140px solid #f49797;
-            border-right: 140px solid #f49797;
+            border-left: 150px solid #f49797;
+            border-right: 150px solid #f49797;
+            border-bottom: 110px solid #ea7a7a;
             border-top: 90px solid transparent;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-            z-index: 2;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            z-index: 3;
         }
 
-        /* La carta dentro del sobre */
+        /* La Carta */
         .letter {
             position: absolute;
-            bottom: 10px;
-            left: 15px;
-            width: 250px;
-            height: 160px;
+            top: 10px;
+            left: 10px;
+            width: 280px;
+            height: 180px;
             background-color: #ffffff;
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.8s ease 0.6s, z-index 0.1s 0.8s, height 0.8s ease, width 0.8s ease, left 0.8s ease;
-            z-index: 1;
+            transition: transform 0.8s ease 0.4s, height 0.8s ease, z-index 0.1s 0.8s;
+            z-index: 2; /* Oculta detrás del bolsillo frontal */
             overflow: hidden;
             color: #444;
             text-align: center;
@@ -223,7 +222,6 @@
             margin-bottom: 15px;
         }
 
-        /* Estilos específicos para la carta larga */
         .texto-carta {
             text-align: left;
             padding-bottom: 20px;
@@ -237,35 +235,47 @@
             margin-top: 0;
         }
 
-        /* Estado Abierto */
+        /* Animación al Abrir */
         .envelope-wrapper.open::before {
             transform: rotateX(180deg);
-            z-index: 0;
+            z-index: 1; /* La solapa se va hacia atrás */
         }
 
         .envelope-wrapper.open .letter {
-            transform: translateY(-130px);
-            height: 280px; /* Un poco más alto para facilitar la lectura */
-            z-index: 4;
+            transform: translateY(-160px); /* Saca la carta hacia arriba */
+            height: 320px; /* Expande la carta */
+            z-index: 5; /* La pone por encima del bolsillo frontal */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            overflow-y: auto; /* Activa la barra de desplazamiento si es necesario */
+            overflow-y: auto; /* Activa el scroll */
         }
-        
-        /* Estilizar la barra de desplazamiento de la carta */
-        .letter::-webkit-scrollbar {
-            width: 6px;
+
+        /* Estilos del Scroll */
+        .letter::-webkit-scrollbar { width: 6px; }
+        .letter::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .letter::-webkit-scrollbar-thumb { background: #de7896; border-radius: 4px; }
+        .letter::-webkit-scrollbar-thumb:hover { background: #cc5479; }
+
+        /* ---------------- BOTÓN DE MÚSICA ---------------- */
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            background-color: #de7896;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: none; /* Se oculta hasta que salga la carta */
+            transition: background-color 0.3s, transform 0.1s;
+            z-index: 10;
         }
-        .letter::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 4px;
-        }
-        .letter::-webkit-scrollbar-thumb {
-            background: #de7896; 
-            border-radius: 4px;
-        }
-        .letter::-webkit-scrollbar-thumb:hover {
-            background: #cc5479; 
-        }
+
+        .music-btn:hover { background-color: #cc5479; }
+        .music-btn:active { transform: scale(0.95); }
+
     </style>
 </head>
 <body>
@@ -279,7 +289,7 @@
         <div id="candles-container"></div>
     </div>
 
-    <!-- SOBRE DE CARTA -->
+    <!-- SOBRE CERRADO REALISTA -->
     <div class="envelope-wrapper" id="envelope">
         <div class="letter">
             <h2>🎉 ¡Feliz cumpleaños! 🎉</h2>
@@ -305,10 +315,14 @@
         </div>
     </div>
 
+    <!-- BOTÓN DE AUDIO -->
+    <button class="music-btn" id="music-btn">⏸️ Pausar Música</button>
+
     <script>
         const cake = document.getElementById('cake');
         const candlesContainer = document.getElementById('candles-container');
         const envelope = document.getElementById('envelope');
+        const musicBtn = document.getElementById('music-btn');
         let candleCount = 0;
         const maxCandles = 5;
 
@@ -316,7 +330,7 @@
         const sonidoVela = new Audio('vela.mp3');
         const sonidoConfeti = new Audio('confeti.mp3');
         const musicaFondo = new Audio('musica.mp3');
-        musicaFondo.loop = true; // Para que la canción se repita
+        musicaFondo.loop = true;
 
         const positions = [
             { left: '45px', bottom: '20px' },
@@ -328,7 +342,6 @@
 
         // 1. Clics en el pastel
         cake.addEventListener('click', () => {
-            // Fase 1: Poner velas
             if (candleCount < maxCandles) {
                 sonidoVela.currentTime = 0; 
                 sonidoVela.play().catch(e => console.log("Audio de vela bloqueado"));
@@ -347,19 +360,15 @@
 
                 candleCount++;
             } 
-            // Fase 2: Apagar velas, confeti y revelar la carta
             else if (candleCount === maxCandles) {
-                // Sonido de confeti
                 sonidoConfeti.play().catch(e => console.log("Audio de confeti bloqueado"));
 
-                // Apagar velas
                 const flames = document.querySelectorAll('.flame');
                 flames.forEach(flame => {
                     flame.classList.remove('flame');
                     flame.classList.add('smoke'); 
                 });
 
-                // Lanzar Confeti
                 confetti({
                     particleCount: 160,
                     spread: 90,
@@ -369,25 +378,40 @@
 
                 candleCount++; 
 
-                // Transición al momento de la carta
+                // Transición a la carta
                 setTimeout(() => {
-                    // Iniciar la música de fondo
+                    // Inicia la música y muestra el botón
                     musicaFondo.play().catch(e => console.log("Música de fondo bloqueada por navegador"));
+                    musicBtn.style.display = 'block';
                     
-                    // Ocultar pastel y mostrar sobre
                     cake.style.opacity = '0';
                     setTimeout(() => {
                         cake.style.display = 'none';
                         envelope.classList.add('show');
                     }, 800);
-
-                }, 2000); // 2 segundos después del confeti
+                }, 2000); 
             }
         });
 
         // 2. Clic en el sobre para abrir la carta
         envelope.addEventListener('click', () => {
-            envelope.classList.toggle('open');
+            // Solo se abre una vez (se quita el toggle y se añade directamente)
+            if(!envelope.classList.contains('open')) {
+                envelope.classList.add('open');
+            }
+        });
+
+        // 3. Funcionalidad del botón de música
+        musicBtn.addEventListener('click', () => {
+            if (musicaFondo.paused) {
+                musicaFondo.play();
+                musicBtn.innerHTML = '⏸️ Pausar Música';
+                musicBtn.style.backgroundColor = '#de7896';
+            } else {
+                musicaFondo.pause();
+                musicBtn.innerHTML = '▶️ Reproducir Música';
+                musicBtn.style.backgroundColor = '#a0a0a0'; // Se pone gris cuando está pausada
+            }
         });
     </script>
 
