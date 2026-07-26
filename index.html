@@ -177,7 +177,7 @@
             transform: translateY(0);
         }
 
-        /* Solapa superior */
+        /* Solapa superior (Estado Base - CERRANDO) */
         .envelope-wrapper::before {
             content: '';
             position: absolute;
@@ -188,8 +188,9 @@
             background-color: #e06666; 
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             transform-origin: top;
-            transition: transform 0.6s ease, z-index 0.2s 0.3s;
-            z-index: 5; /* Aumentado para cubrir la carta al cerrar */
+            /* Espera 0.8s (lo que tarda la carta en bajar) para cerrarse */
+            transition: transform 0.6s ease 0.8s, z-index 0.2s 0.8s;
+            z-index: 5; 
             pointer-events: none;
         }
 
@@ -207,16 +208,17 @@
             pointer-events: none;
         }
 
-        /* ---------------- TEXTO FRONTAL DEL SOBRE ---------------- */
+        /* Texto Frontal (Estado Base - CERRANDO) */
         .front-text {
             position: absolute;
             bottom: 30px;
             width: 100%;
             text-align: center;
-            z-index: 4; /* Sobre el bolsillo, debajo de la solapa */
+            z-index: 4; 
             color: white;
             pointer-events: none;
-            transition: opacity 0.4s ease;
+            /* Espera 0.8s a que se guarde la carta para reaparecer */
+            transition: opacity 0.4s ease 0.8s;
         }
 
         .front-text .para {
@@ -233,7 +235,7 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
         }
 
-        /* La Carta */
+        /* La Carta (Estado Base - CERRANDO) */
         .letter {
             position: absolute;
             top: 10px;
@@ -244,7 +246,8 @@
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.8s ease, height 0.8s ease, z-index 0.1s;
+            /* Se baja INMEDIATAMENTE (delay 0s) al cerrar */
+            transition: transform 0.8s ease 0s, height 0.8s ease 0s, z-index 0.1s;
             z-index: 2; 
             overflow: hidden;
             color: #444;
@@ -271,23 +274,36 @@
             margin-top: 0;
         }
 
-        /* Animación al Abrir/Cerrar */
+        /* ========================================= */
+        /* ANIMACIÓN AL ABRIR (ESTADOS .open)        */
+        /* ========================================= */
+        
+        /* Solapa superior (ABRIENDO) */
         .envelope-wrapper.open::before {
             transform: rotateX(180deg);
             z-index: 1; 
+            /* Se abre INMEDIATAMENTE (delay 0s) */
+            transition: transform 0.6s ease 0s, z-index 0.2s 0.6s; 
         }
 
+        /* Texto Frontal (ABRIENDO) */
         .envelope-wrapper.open .front-text {
-            opacity: 0; /* Desaparece el texto frontal al abrir */
+            opacity: 0; 
+            /* Desaparece INMEDIATAMENTE (delay 0s) */
+            transition: opacity 0.4s ease 0s; 
         }
 
+        /* La Carta (ABRIENDO) */
         .envelope-wrapper.open .letter {
             transform: translateY(-130px); 
             height: 250px; 
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             overflow-y: auto; 
+            /* Espera 0.6s (a que se abra la solapa) antes de salir */
+            transition: transform 0.8s ease 0.6s, height 0.8s ease 0.6s; 
         }
 
+        /* Scrollbar de la carta */
         .letter::-webkit-scrollbar { width: 6px; }
         .letter::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         .letter::-webkit-scrollbar-thumb { background: #de7896; border-radius: 4px; }
@@ -410,7 +426,6 @@
 
                 candleCount++;
                 
-                // Cambiar el texto de instrucción si ya puso todas las velas
                 if(candleCount === maxCandles) {
                     instruction.innerHTML = "¡Apaga las velas!";
                 }
@@ -433,13 +448,10 @@
 
                 candleCount++; 
 
-                // Transición a la carta
                 setTimeout(() => {
-                    // Inicia la música y muestra el botón
                     musicaFondo.play().catch(e => console.log("Música de fondo bloqueada por navegador"));
                     musicBtn.style.display = 'block';
                     
-                    // Ocultamos el pastel y la instrucción
                     cake.style.opacity = '0';
                     instruction.style.opacity = '0';
                     
