@@ -155,7 +155,7 @@
             100% { opacity: 0; transform: translate(-50%, -40px) scale(2.5); }
         }
 
-        /* ---------------- SOBRE REALISTA (CORREGIDO) ---------------- */
+        /* ---------------- SOBRE REALISTA ---------------- */
         .envelope-wrapper {
             position: relative;
             width: 300px;
@@ -189,7 +189,7 @@
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             transform-origin: top;
             transition: transform 0.6s ease, z-index 0.2s 0.3s;
-            z-index: 4;
+            z-index: 5; /* Aumentado para cubrir la carta al cerrar */
             pointer-events: none;
         }
 
@@ -205,6 +205,32 @@
             clip-path: polygon(0 100%, 100% 100%, 100% 30px, 50% 0, 0 30px);
             z-index: 3;
             pointer-events: none;
+        }
+
+        /* ---------------- TEXTO FRONTAL DEL SOBRE ---------------- */
+        .front-text {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 4; /* Sobre el bolsillo, debajo de la solapa */
+            color: white;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .front-text .para {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .front-text .de {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.95;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
         }
 
         /* La Carta */
@@ -249,6 +275,10 @@
         .envelope-wrapper.open::before {
             transform: rotateX(180deg);
             z-index: 1; 
+        }
+
+        .envelope-wrapper.open .front-text {
+            opacity: 0; /* Desaparece el texto frontal al abrir */
         }
 
         .envelope-wrapper.open .letter {
@@ -302,6 +332,14 @@
 
     <!-- SOBRE CERRADO REALISTA -->
     <div class="envelope-wrapper" id="envelope">
+        
+        <!-- TEXTO FRONTAL (Para/De) -->
+        <div class="front-text">
+            <div class="para">Para: Sawa, mi mejor amiga</div>
+            <div class="de">De: Dañi, tu mejor amigo</div>
+        </div>
+
+        <!-- CARTA -->
         <div class="letter">
             <h2>🎉 ¡Feliz cumpleaños! 🎉</h2>
             <div class="texto-carta">
